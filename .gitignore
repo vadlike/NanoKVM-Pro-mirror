@@ -1,0 +1,9 @@
+__pycache__/
+build/
+dist/
+release/NanoKVM-Mirror-v1.0.0/
+*.spec
+kvm-screen-mirror.json
+*.exe
+release/*.zip
+release/SHA256SUMS.txt
