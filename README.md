@@ -58,6 +58,3 @@ Config template:
 
 NanoKVM Mirror was made as a simple desktop companion for controlling the small NanoKVM screen more comfortably from Windows.
 
-## Star History
-
-[![Star History Chart](https://api.star-history.com/image?repos=vadlike/nanokvmpro-NanoKVM-Mirror&type=date&legend=top-left)](https://www.star-history.com/?repos=vadlike%2Fnanokvmpro-NanoKVM-Mirror&type=date&legend=top-left)
