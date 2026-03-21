@@ -60,4 +60,12 @@ NanoKVM Mirror was made as a simple desktop companion for controlling the small 
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=vadlike/nanokvmpro-NanoKVM-Mirror&type=Date)](https://www.star-history.com/#vadlike/nanokvmpro-NanoKVM-Mirror&Date)
+## Star History
+
+<a href="https://www.star-history.com/?repos=vadlike%2Fnanokvmpro-NanoKVM-Mirror&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/image?repos=vadlike/nanokvmpro-NanoKVM-Mirror&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/image?repos=vadlike/nanokvmpro-NanoKVM-Mirror&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/image?repos=vadlike/nanokvmpro-NanoKVM-Mirror&type=date&legend=top-left" />
+ </picture>
+</a>
