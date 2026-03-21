@@ -1,4 +1,4 @@
-# NanoKVM Mirror ![visitors](https://visitor-badge.laobi.icu/badge?page_id=vadlike.nanokvmpro-NanoKVM-Mirror)
+# NanoKVM Pro Mirror ![visitors](https://visitor-badge.laobi.icu/badge?page_id=vadlike.nanokvmpro-NanoKVM-Mirror)
 
 Portable Windows viewer for mirroring the local NanoKVM LCD over SSH.
 
