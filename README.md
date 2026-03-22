@@ -13,9 +13,6 @@ Portable Windows viewer for mirroring the local NanoKVM LCD over SSH.
 
 It shows the built-in NanoKVM screen on your PC, supports mouse tap and swipe control, and includes extra buttons for knob-style actions.
 
-Author: [VADLIKE](https://github.com/vadlike)  
-Repository: [vadlike/nanokvmpro-NanoKVM-Mirror](https://github.com/vadlike/nanokvmpro-NanoKVM-Mirror)
-
 ![NanoKVM Mirror Demo](gif.gif)
 
 ## Features
