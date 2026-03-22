@@ -1,0 +1,1 @@
+release/NanoKVM-Mirror.exe filter=lfs diff=lfs merge=lfs -text
