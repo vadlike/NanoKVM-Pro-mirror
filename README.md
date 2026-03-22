@@ -1,4 +1,13 @@
-# NanoKVM Pro Mirror ![visitors](https://visitor-badge.laobi.icu/badge?page_id=vadlike.nanokvmpro-NanoKVM-Mirror)
+<h1 align="center">NanoKVM Pro Mirror</h1>
+
+<p align="center">
+  <img src="https://visitor-badge.laobi.icu/badge?page_id=vadlike.nanokvmpro-NanoKVM-Mirror" alt="visitors">
+  <img src="https://img.shields.io/badge/license-GPL--3.0-blue.svg" alt="license GPL-3.0">
+  <img src="https://img.shields.io/github/last-commit/vadlike/nanokvmpro-NanoKVM-Mirror" alt="last commit">
+  <a href="https://wiki.sipeed.com/hardware/en/kvm/NanoKVM_Pro/introduction.html">
+    <img src="https://img.shields.io/badge/NanoKVM%20Pro-Official%20Device%20Page-red" alt="NanoKVM Pro device">
+  </a>
+</p>
 
 Portable Windows viewer for mirroring the local NanoKVM LCD over SSH.
 
@@ -54,7 +63,10 @@ Config template:
 - touch injection is done through available input event tools on the device
 - the portable app stores its config beside the `.exe`
 
+## License
+
+This project is licensed under the [GNU GPL v3.0](LICENSE).
+
 ## About
 
 NanoKVM Mirror was made as a simple desktop companion for controlling the small NanoKVM screen more comfortably from Windows.
-
