@@ -1,4 +1,5 @@
 import argparse
+import ctypes
 import io
 import json
 import os
@@ -15,6 +16,14 @@ from PIL import Image, ImageTk
 PHYSICAL_WIDTH = 172
 PHYSICAL_HEIGHT = 320
 FRAME_SIZE = PHYSICAL_WIDTH * PHYSICAL_HEIGHT * 2
+GWL_EXSTYLE = -20
+WS_EX_APPWINDOW = 0x00040000
+WS_EX_TOOLWINDOW = 0x00000080
+SWP_NOSIZE = 0x0001
+SWP_NOMOVE = 0x0002
+SWP_NOZORDER = 0x0004
+SWP_NOACTIVATE = 0x0010
+SWP_FRAMECHANGED = 0x0020
 
 
 def get_app_dir():
@@ -111,11 +120,12 @@ class MirrorApp:
         self.status_height = 28
         self.connection_generation = 0
         self.connection_lock = threading.Lock()
+        self.use_borderless = sys.platform != "win32"
 
         self.root = tk.Tk()
         self.root.title("NanoKVM Screen Mirror")
         self.root.configure(bg="black")
-        self.root.overrideredirect(True)
+        self.root.overrideredirect(self.use_borderless)
         self.root.protocol("WM_DELETE_WINDOW", self.close)
         self.root.grid_rowconfigure(2, weight=1)
         self.root.grid_columnconfigure(0, weight=1)
@@ -237,6 +247,8 @@ class MirrorApp:
         self.resize_grip.bind("<ButtonPress-1>", self.start_resize)
         self.resize_grip.bind("<B1-Motion>", self.on_resize_drag)
         self.fit_window()
+        if self.use_borderless:
+            self.root.after(50, self.ensure_taskbar_window)
         self.start_connect()
         self.root.after(16, self.repaint)
 
@@ -275,6 +287,8 @@ class MirrorApp:
         )
 
     def bind_drag_widget(self, widget):
+        if not self.use_borderless:
+            return
         widget.bind("<ButtonPress-1>", self.start_window_drag)
         widget.bind("<B1-Motion>", self.on_window_drag)
 
@@ -303,16 +317,85 @@ class MirrorApp:
         new_h = max(240, start_h + (event.y_root - start_y))
         self.root.geometry("{0}x{1}".format(new_w, new_h))
 
+    def get_window_handle(self):
+        if sys.platform != "win32":
+            return None
+        try:
+            self.root.update_idletasks()
+            hwnd = int(self.root.winfo_id())
+            parent = ctypes.windll.user32.GetParent(hwnd)
+            return parent or hwnd
+        except Exception:
+            return None
+
+    def apply_taskbar_window_style(self):
+        hwnd = self.get_window_handle()
+        if not hwnd:
+            return
+        user32 = ctypes.windll.user32
+        style = user32.GetWindowLongW(hwnd, GWL_EXSTYLE)
+        style = (style & ~WS_EX_TOOLWINDOW) | WS_EX_APPWINDOW
+        user32.SetWindowLongW(hwnd, GWL_EXSTYLE, style)
+        user32.SetWindowPos(
+            hwnd,
+            0,
+            0,
+            0,
+            0,
+            0,
+            SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED,
+        )
+
+    def restore_borderless_window(self):
+        if not self.use_borderless or not self.running or self.is_minimized:
+            return
+        try:
+            self.root.overrideredirect(True)
+            self.apply_taskbar_window_style()
+            self.root.lift()
+        except tk.TclError:
+            pass
+
+    def ensure_taskbar_window(self):
+        if sys.platform != "win32" or not self.running or not self.use_borderless:
+            return
+        try:
+            geometry = self.root.geometry()
+            self.root.overrideredirect(False)
+            self.apply_taskbar_window_style()
+            self.root.withdraw()
+            self.root.after(10, lambda saved_geometry=geometry: self.finish_window_restore(saved_geometry))
+        except tk.TclError:
+            pass
+
+    def finish_window_restore(self, geometry=None):
+        if not self.running:
+            return
+        try:
+            if geometry:
+                self.root.geometry(geometry)
+            self.root.deiconify()
+            self.root.state("normal")
+            self.root.lift()
+            self.root.after(10, self.restore_borderless_window)
+        except tk.TclError:
+            pass
+
     def minimize_window(self):
         self.is_minimized = True
+        if not self.use_borderless:
+            self.root.iconify()
+            return
         self.root.overrideredirect(False)
+        self.apply_taskbar_window_style()
         self.root.update_idletasks()
         self.root.iconify()
 
     def on_map(self, _event):
         if self.root.state() == "normal":
             self.is_minimized = False
-            self.root.after(10, lambda: self.root.overrideredirect(True))
+            if self.use_borderless:
+                self.root.after(10, self.restore_borderless_window)
 
     def show_about(self):
         about = tk.Toplevel(self.root)

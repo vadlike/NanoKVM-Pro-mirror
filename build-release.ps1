@@ -1,9 +1,11 @@
 $ErrorActionPreference = "Stop"
 
 $base = Split-Path -Parent $MyInvocation.MyCommand.Path
+$version = "v2.0.0"
 $releaseDir = Join-Path $base "release"
-$stage = Join-Path $releaseDir "NanoKVM-Mirror-v1.0.0"
-$zip = Join-Path $releaseDir "NanoKVM-Mirror-v1.0.0.zip"
+$distExe = Join-Path $base "dist\\NanoKVM-Mirror.exe"
+$stage = Join-Path $releaseDir "NanoKVM-Mirror-$version"
+$zip = Join-Path $releaseDir "NanoKVM-Mirror-$version.zip"
 
 if (Test-Path $stage) {
     Remove-Item $stage -Recurse -Force
@@ -11,8 +13,11 @@ if (Test-Path $stage) {
 
 New-Item -ItemType Directory -Path $stage -Force | Out-Null
 
+if (-not (Test-Path $distExe)) {
+    throw "Build artifact not found: $distExe"
+}
+
 $files = @(
-    "NanoKVM-Mirror.exe",
     "kvm-screen-mirror.py",
     "mirror-kvm-screen.cmd",
     "mirror-kvm-screen.vbs",
@@ -21,6 +26,8 @@ $files = @(
     "gif.gif",
     "kvm-screen-mirror.example.json"
 )
+
+Copy-Item -Path $distExe -Destination (Join-Path $stage "NanoKVM-Mirror.exe") -Force
 
 foreach ($file in $files) {
     Copy-Item -Path (Join-Path $base $file) -Destination (Join-Path $stage $file) -Force
@@ -33,7 +40,7 @@ if (Test-Path $zip) {
 Compress-Archive -Path (Join-Path $stage "*") -DestinationPath $zip -Force
 
 $hash = (Get-FileHash -Algorithm SHA256 $zip).Hash
-Set-Content -Path (Join-Path $releaseDir "SHA256SUMS.txt") -Value "$hash  NanoKVM-Mirror-v1.0.0.zip"
+Set-Content -Path (Join-Path $releaseDir "SHA256SUMS.txt") -Value "$hash  NanoKVM-Mirror-$version.zip"
 
 Write-Output $zip
 Write-Output $hash
